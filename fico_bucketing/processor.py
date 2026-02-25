@@ -314,3 +314,23 @@ class BucketingStrategyOptimizer:
             'recommended_n_buckets': int(row['n_buckets']),
             'metrics': row.to_dict()
         }
+
+    def plot_strategy_comparison(self, comparison_df: pd.DataFrame, figsize: Tuple[int, int] = (15, 10)):
+        """Visualizes performance metrics across different bucketing strategies."""
+        fig, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2, figsize=figsize)
+        
+        metrics = [
+            ('ks_statistic', 'KS Statistic', ax1),
+            ('gini', 'Gini Coefficient', ax2),
+            ('information_value', 'Information Value', ax3),
+            ('min_pop_pct', 'Min Bucket Population %', ax4)
+        ]
+        
+        for col, title, ax in metrics:
+            sns.lineplot(data=comparison_df, x='n_buckets', y=col, hue='method', marker='o', ax=ax)
+            ax.set_title(f'{title} by Strategy')
+            ax.set_xlabel('Number of Buckets')
+            ax.grid(True, linestyle='--', alpha=0.7)
+            
+        plt.tight_layout()
+        return fig
